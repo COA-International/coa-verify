@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coa.international/schemas/signed-record/v2.0/payload.schema.json",
+  "title": "COA signed-record payload, schema_version 2.0",
+  "description": "The immutable signed payload. Current membership, record standing, file locations and anchor data are deliberately NOT part of it. Normative rules: docs/protocol/signed-record-v1.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "purpose",
+    "environment",
+    "issuer",
+    "signer",
+    "program_id",
+    "issuance_id",
+    "verification_code",
+    "verification_url",
+    "issued_at",
+    "key_id",
+    "signature_algorithm",
+    "canonicalization",
+    "store",
+    "distributor",
+    "product",
+    "batch",
+    "report",
+    "purchase_event",
+    "document"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "2.0"
+    },
+    "purpose": {
+      "const": "store_coa_issuance"
+    },
+    "environment": {
+      "enum": [
+        "production",
+        "demo",
+        "development"
+      ]
+    },
+    "issuer": {
+      "description": "The program operator whose assertion this is. issuer.id MUST equal program_id.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "name": {
+          "$ref": "defs.schema.json#/$defs/display_text"
+        },
+        "role": {
+          "const": "program_operator"
+        }
+      }
+    },
+    "signer": {
+      "description": "The party whose key produced the signature. Release 1: COA International as independent verifier, using its per-tenant tenant_signer key.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "role"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "name": {
+          "$ref": "defs.schema.json#/$defs/display_text"
+        },
+        "role": {
+          "const": "independent_verifier"
+        }
+      }
+    },
+    "program_id": {
+      "$ref": "defs.schema.json#/$defs/identifier"
+    },
+    "issuance_id": {
+      "$ref": "defs.schema.json#/$defs/identifier"
+    },
+    "verification_code": {
+      "$ref": "defs.schema.json#/$defs/verification_code"
+    },
+    "verification_url": {
+      "type": "string",
+      "maxLength": 300,
+      "pattern": "^https://[a-z0-9.-]+(:[0-9]{1,5})?/v/[0-9A-HJKMNP-TV-Z]{28}$"
+    },
+    "issued_at": {
+      "$ref": "defs.schema.json#/$defs/timestamp"
+    },
+    "key_id": {
+      "$ref": "defs.schema.json#/$defs/identifier"
+    },
+    "signature_algorithm": {
+      "const": "Ed25519"
+    },
+    "canonicalization": {
+      "const": "RFC8785"
+    },
+    "store": {
+      "$ref": "defs.schema.json#/$defs/named_entity"
+    },
+    "distributor": {
+      "$ref": "defs.schema.json#/$defs/named_entity"
+    },
+    "product": {
+      "$ref": "defs.schema.json#/$defs/named_entity"
+    },
+    "batch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "lot"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "lot": {
+          "$ref": "defs.schema.json#/$defs/display_text"
+        },
+        "expiry_date": {
+          "$ref": "defs.schema.json#/$defs/date",
+          "description": "Actual product expiry as supplied. Omitted when not supplied; never invented."
+        }
+      }
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "version_id",
+        "lab_name_as_reported",
+        "reference",
+        "provenance_basis",
+        "sha256",
+        "byte_length",
+        "page_count"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "version_id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "lab_name_as_reported": {
+          "$ref": "defs.schema.json#/$defs/display_text"
+        },
+        "reference": {
+          "$ref": "defs.schema.json#/$defs/display_text"
+        },
+        "report_date": {
+          "$ref": "defs.schema.json#/$defs/date"
+        },
+        "provenance_basis": {
+          "enum": [
+            "submitted_report_reviewed",
+            "lab_signed"
+          ]
+        },
+        "sha256": {
+          "$ref": "defs.schema.json#/$defs/sha256_hex",
+          "description": "SHA-256 of the original report bytes exactly as received."
+        },
+        "byte_length": {
+          "$ref": "defs.schema.json#/$defs/byte_length"
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        }
+      }
+    },
+    "purchase_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "statement",
+        "purchase_date",
+        "received_at"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "statement": {
+          "$ref": "defs.schema.json#/$defs/display_text"
+        },
+        "purchase_date": {
+          "$ref": "defs.schema.json#/$defs/date"
+        },
+        "received_at": {
+          "$ref": "defs.schema.json#/$defs/timestamp",
+          "description": "When the program operator's system received the sale report, as supplied."
+        }
+      }
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sha256",
+        "byte_length",
+        "template_version",
+        "presentation_page_count",
+        "total_page_count"
+      ],
+      "properties": {
+        "sha256": {
+          "$ref": "defs.schema.json#/$defs/sha256_hex",
+          "description": "SHA-256 of the combined store-specific PDF bytes exactly as generated."
+        },
+        "byte_length": {
+          "$ref": "defs.schema.json#/$defs/byte_length"
+        },
+        "template_version": {
+          "type": "string",
+          "pattern": "^[0-9]{1,4}\\.[0-9]{1,4}$"
+        },
+        "presentation_page_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "total_page_count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 10020
+        }
+      }
+    },
+    "supersedes": {
+      "description": "Present only on a correction: the earlier issuance this record replaces.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issuance_id",
+        "verification_code"
+      ],
+      "properties": {
+        "issuance_id": {
+          "$ref": "defs.schema.json#/$defs/identifier"
+        },
+        "verification_code": {
+          "$ref": "defs.schema.json#/$defs/verification_code"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,103 @@
+# Builds a release when a tag vX.Y.Z is pushed: the single-file script, stand-alone executables for
+# Windows, macOS and Linux, SHA-256 checksums and build-provenance attestations. The GitHub Release is
+# created as a DRAFT; a maintainer reviews it and publishes it by hand. npm publishing is separate
+# (see RELEASING.md).
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cli
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Tag must equal the package version
+        run: |
+          v=$(node -p "require('./coa-verify/package.json').version")
+          test "v$v" = "$GITHUB_REF_NAME" || { echo "tag $GITHUB_REF_NAME != package version $v"; exit 1; }
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run bundle -w coa-verify
+      - run: node coa-verify/scripts/smoke.mjs node coa-verify/bundle/coa-verify.mjs
+      - name: Collect
+        run: |
+          v=$(node -p "require('./coa-verify/package.json').version")
+          mkdir -p ../dist
+          cp coa-verify/bundle/coa-verify.mjs "../dist/coa-verify-$v.mjs"
+          cp coa-verify/bundle/LICENSE coa-verify/bundle/NOTICE coa-verify/bundle/THIRD_PARTY_NOTICES.md ../dist/
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bundle
+          path: dist/
+
+  executables:
+    needs: bundle
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: cli
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Put signtool on PATH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $st = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" -Recurse -Filter signtool.exe |
+            Where-Object { $_.FullName -match '\\x64\\' } | Sort-Object FullName -Descending | Select-Object -First 1
+          if ($st) { Add-Content $env:GITHUB_PATH $st.DirectoryName }
+      - run: npm ci
+      - run: npm run bundle -w coa-verify
+      - run: npm run sea -w coa-verify
+      - name: Smoke test the executable
+        run: node coa-verify/scripts/smoke.mjs coa-verify/sea-out/coa-verify-*
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: exe-${{ matrix.os }}
+          path: cli/coa-verify/sea-out/coa-verify-*
+
+  draft-release:
+    needs: [bundle, executables]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: sha256sum coa-verify-* > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/coa-verify-*
+      - name: Draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --draft --verify-tag \
+            --title "coa-verify $GITHUB_REF_NAME" \
+            --notes "Check every download against SHA256SUMS.txt before running it. See the README for how to verify the checksums and the build provenance."

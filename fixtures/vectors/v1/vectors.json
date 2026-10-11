@@ -1,0 +1,687 @@
+{
+  "vector_set": "coa-signed-record-protocol-v1",
+  "schema_version": "2.0",
+  "generated_by": "python -m coa_service.tools.generate_vectors",
+  "notes": [
+    "All keys are TEST-ONLY and derived from public seeds (keys.json).",
+    "`trust` lists key_ids forming the out-of-band trust store (full entries in keys.json: key, program_id, role, environment, signer_id). Verifiers resolve the key by payload.key_id. `candidate` names a key shipped with the record (never trusted).",
+    "Envelope `expect` fields map to the verifier result: parse_ok, schema_version_supported, structure_valid, signature_valid, issuer_trusted."
+  ],
+  "envelope_cases": [
+    {
+      "id": "valid-basic",
+      "description": "Canonical envelope signed by the trusted demo tenant key.",
+      "envelope": "envelopes/valid-basic.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "files": {
+        "original_report": "files/original-report.pdf",
+        "store_document": "files/store-document.pdf"
+      },
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": true
+      }
+    },
+    {
+      "id": "valid-reordered-properties",
+      "description": "Same record with members reordered and pretty-printed; must verify.",
+      "envelope": "envelopes/valid-reordered-properties.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": true
+      }
+    },
+    {
+      "id": "valid-unicode",
+      "description": "Non-ASCII names (NFC) including CJK and astral-plane characters.",
+      "envelope": "envelopes/valid-unicode.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "canonical_payload_utf8_sha256": "fe96542820968ccf1c66510197d6833b4f6584e8a4ee6e5093162164dfcd9ea8",
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": true
+      }
+    },
+    {
+      "id": "valid-300-astral-code-points",
+      "description": "store.name of exactly 300 astral-plane code points (600 UTF-16 units): lengths count code points.",
+      "envelope": "envelopes/valid-300-astral-code-points.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": true
+      }
+    },
+    {
+      "id": "astral-301-code-points",
+      "description": "store.name of 301 code points exceeds maxLength 300.",
+      "envelope": "envelopes/astral-301-code-points.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "valid-correction-supersedes",
+      "description": "A correction record that names the issuance it supersedes.",
+      "envelope": "envelopes/valid-correction-supersedes.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": true
+      }
+    },
+    {
+      "id": "valid-rotated-key",
+      "description": "Signed by the rotated tenant key; the key is resolved by key_id.",
+      "envelope": "envelopes/valid-rotated-key.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": true
+      }
+    },
+    {
+      "id": "tampered-store-name",
+      "description": "store.name changed after signing.",
+      "envelope": "envelopes/tampered-store-name.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "tampered-document-hash",
+      "description": "document.sha256 swapped to the hash of the one-byte-changed PDF.",
+      "envelope": "envelopes/tampered-document-hash.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "modified-key-id",
+      "description": "key_id changed after signing to the rotated key's id.",
+      "envelope": "envelopes/modified-key-id.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "tampered-signature",
+      "description": "First signature character altered.",
+      "envelope": "envelopes/tampered-signature.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "signature-noncanonical-trailing-bits",
+      "description": "Signature text whose last character sets non-zero unused bits; not canonical base64url.",
+      "envelope": "envelopes/signature-noncanonical-trailing-bits.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "signature-padded",
+      "description": "Signature text with '==' padding; padding is forbidden.",
+      "envelope": "envelopes/signature-padded.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "untrusted-attacker-key",
+      "description": "Internally valid signature by an attacker key shipped alongside the record (AC-10).",
+      "envelope": "envelopes/untrusted-attacker-key.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "candidate": "attacker-k1",
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "cross-tenant-forgery",
+      "description": "demo-program record signed with the (trusted) second tenant's key: signature valid, NOT trusted (AC-43).",
+      "envelope": "envelopes/cross-tenant-forgery.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "environment-mismatch",
+      "description": "demo key used for a payload claiming environment=production: not trusted.",
+      "envelope": "envelopes/environment-mismatch.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": true,
+        "signature_valid": true,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "issuer-program-mismatch",
+      "description": "issuer.id differs from program_id.",
+      "envelope": "envelopes/issuer-program-mismatch.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "verification-url-mismatch",
+      "description": "verification_url names a different code than verification_code.",
+      "envelope": "envelopes/verification-url-mismatch.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "invalid-calendar-date",
+      "description": "purchase_date 2026-02-31 matches the pattern but is not a real date.",
+      "envelope": "envelopes/invalid-calendar-date.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "duplicate-key",
+      "description": "Payload contains a duplicate `environment` member.",
+      "envelope": "envelopes/duplicate-key.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "duplicate_key"
+      }
+    },
+    {
+      "id": "float-number",
+      "description": "A byte_length written as a float; floats are forbidden.",
+      "envelope": "envelopes/float-number.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "float_not_allowed"
+      }
+    },
+    {
+      "id": "not-nfc",
+      "description": "A string in decomposed (NFD) form.",
+      "envelope": "envelopes/not-nfc.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "not_nfc"
+      }
+    },
+    {
+      "id": "bidi-override",
+      "description": "U+202E RIGHT-TO-LEFT OVERRIDE inside store.name.",
+      "envelope": "envelopes/bidi-override.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "forbidden_character"
+      }
+    },
+    {
+      "id": "zero-width-space",
+      "description": "U+200B ZERO WIDTH SPACE inside store.name.",
+      "envelope": "envelopes/zero-width-space.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "forbidden_character"
+      }
+    },
+    {
+      "id": "leading-bom-in-string",
+      "description": "U+FEFF at the start of store.name.",
+      "envelope": "envelopes/leading-bom-in-string.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "forbidden_character"
+      }
+    },
+    {
+      "id": "trailing-nbsp",
+      "description": "U+00A0 NO-BREAK SPACE at the end of store.name.",
+      "envelope": "envelopes/trailing-nbsp.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "edge_whitespace"
+      }
+    },
+    {
+      "id": "astral-tag-character",
+      "description": "U+E0041 TAG LATIN CAPITAL LETTER A (astral format character) inside store.name.",
+      "envelope": "envelopes/astral-tag-character.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "forbidden_character"
+      }
+    },
+    {
+      "id": "lone-surrogate",
+      "description": "A JSON escape producing an unpaired surrogate (\\ud800).",
+      "envelope": "envelopes/lone-surrogate.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": false,
+        "error_code": "invalid_unicode"
+      }
+    },
+    {
+      "id": "unsupported-schema-version",
+      "description": "schema_version 3.0 is unknown to v1 verifiers.",
+      "envelope": "envelopes/unsupported-schema-version.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": false,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "unsupported-algorithm",
+      "description": "signature_algorithm other than Ed25519 is unsupported.",
+      "envelope": "envelopes/unsupported-algorithm.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    },
+    {
+      "id": "unknown-field",
+      "description": "An extra payload member (e.g. current membership) is rejected by the schema.",
+      "envelope": "envelopes/unknown-field.json",
+      "trust": [
+        "demo-program-k1",
+        "demo-program-k2",
+        "second-demo-program-k1"
+      ],
+      "expect": {
+        "parse_ok": true,
+        "schema_version_supported": true,
+        "structure_valid": false,
+        "signature_valid": false,
+        "issuer_trusted": false
+      }
+    }
+  ],
+  "file_cases": [
+    {
+      "id": "original-matches",
+      "file": "files/original-report.pdf",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "matches": "original_report"
+      }
+    },
+    {
+      "id": "document-matches",
+      "file": "files/store-document.pdf",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "matches": "store_document"
+      }
+    },
+    {
+      "id": "original-one-byte-changed",
+      "file": "files/original-report.one-byte-changed.pdf",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "matches": null
+      }
+    },
+    {
+      "id": "document-one-byte-changed",
+      "file": "files/store-document.one-byte-changed.pdf",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "matches": null
+      }
+    }
+  ],
+  "anchor_cases": [
+    {
+      "id": "anchor-valid",
+      "proof": "anchor-proofs/valid-basic.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "inclusion_valid": true,
+        "anchor_status": "confirmed",
+        "public": false
+      }
+    },
+    {
+      "id": "anchor-wrong-root",
+      "proof": "anchor-proofs/wrong-root.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "inclusion_valid": false
+      }
+    },
+    {
+      "id": "anchor-wrong-index",
+      "proof": "anchor-proofs/wrong-index.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "inclusion_valid": false
+      }
+    },
+    {
+      "id": "anchor-leaf-mismatch",
+      "proof": "anchor-proofs/leaf-mismatch.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "description": "Internally consistent proof for a DIFFERENT record; the leaf recomputed from this payload is not in it.",
+      "expect": {
+        "inclusion_valid": false
+      }
+    },
+    {
+      "id": "ots-attested",
+      "proof": "anchor-proofs/ots-attested.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "headers": "ots/headers.json",
+      "expect": {
+        "inclusion_valid": true,
+        "anchor_status": "confirmed",
+        "public": true,
+        "ots": {
+          "status": "attested",
+          "block_height": 900000,
+          "block_time": "2026-09-21T14:13:20Z"
+        }
+      }
+    },
+    {
+      "id": "ots-attested-no-headers",
+      "proof": "anchor-proofs/ots-attested.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "description": "Without a trusted header source the attestation is reported but not confirmed.",
+      "expect": {
+        "inclusion_valid": true,
+        "public": true,
+        "ots": {
+          "status": "attested_unverified",
+          "block_height": 900000,
+          "block_time": null
+        }
+      }
+    },
+    {
+      "id": "ots-wrong-header",
+      "proof": "anchor-proofs/ots-attested.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "headers": "ots/headers-wrong.json",
+      "expect": {
+        "inclusion_valid": true,
+        "public": true,
+        "ots": {
+          "status": "invalid"
+        }
+      }
+    },
+    {
+      "id": "ots-pending",
+      "proof": "anchor-proofs/ots-pending.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "headers": "ots/headers.json",
+      "expect": {
+        "inclusion_valid": true,
+        "anchor_status": "pending",
+        "public": true,
+        "ots": {
+          "status": "pending"
+        }
+      }
+    },
+    {
+      "id": "ots-proof-for-other-root",
+      "proof": "anchor-proofs/ots-other-root.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "headers": "ots/headers.json",
+      "description": "The .ots file commits to a different digest than the anchor proof's root.",
+      "expect": {
+        "inclusion_valid": true,
+        "public": true,
+        "ots": {
+          "status": "invalid"
+        }
+      }
+    },
+    {
+      "id": "ots-message-too-long",
+      "proof": "anchor-proofs/ots-message-too-long.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "headers": "ots/headers.json",
+      "description": "40 hexlify operations: an intermediate message would exceed 4096 bytes. Must be invalid, quickly and without large allocations.",
+      "expect": {
+        "inclusion_valid": true,
+        "public": true,
+        "ots": {
+          "status": "invalid"
+        }
+      }
+    },
+    {
+      "id": "anchor-pending",
+      "proof": "anchor-proofs/pending.anchor-proof.json",
+      "envelope": "envelopes/valid-basic.json",
+      "expect": {
+        "inclusion_valid": true,
+        "anchor_status": "pending",
+        "public": false
+      }
+    }
+  ],
+  "merkle": "merkle.json",
+  "key_directory": "key-directory.json"
+}

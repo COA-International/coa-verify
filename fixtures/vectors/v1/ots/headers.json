@@ -1,0 +1,9 @@
+{
+  "warning": "SYNTHETIC TEST HEADERS - not real Bitcoin blocks. Verifiers must use a trusted header source.",
+  "headers": {
+    "900000": {
+      "merkle_root": "79cd59715c8111601e3ac9a7104139c1b8e4e242d1b951f11d8a8eba62c7b403",
+      "time": 1790000000
+    }
+  }
+}

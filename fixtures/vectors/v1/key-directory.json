@@ -1,0 +1,65 @@
+{
+  "directory_version": "1",
+  "generated_at": "2026-09-25T00:00:00Z",
+  "tenants": [
+    {
+      "program_id": "demo-program",
+      "program_name": "Demo Program Operator (fictional)",
+      "roles": {
+        "tenant_signer": [
+          {
+            "key_id": "demo-program-k1",
+            "program_id": "demo-program",
+            "role": "tenant_signer",
+            "signer_id": "coa-international",
+            "algorithm": "Ed25519",
+            "public_key": "sKhPMljtNJ9Bnlr5Rr4GMcgKnULgy2H_C7-BQQnXAEk",
+            "fingerprint": "3d325d98ea9b0082fdcfc40d251d13007e3befab2cc07750eac8bf109b97a917",
+            "status": "retired",
+            "environment": "demo",
+            "created_at": "2026-09-01T00:00:00Z",
+            "activated_at": "2026-09-01T00:00:00Z",
+            "retired_at": "2026-09-25T00:00:00Z"
+          },
+          {
+            "key_id": "demo-program-k2",
+            "program_id": "demo-program",
+            "role": "tenant_signer",
+            "signer_id": "coa-international",
+            "algorithm": "Ed25519",
+            "public_key": "Dg0SS77gpfO0EniJoHbCraeLmpqihmWg0-qz1vN6qm0",
+            "fingerprint": "0c3c8a76d9226216f53649d64c286552f8a8fc7779c7cd371ce62936de27e705",
+            "status": "active",
+            "environment": "demo",
+            "created_at": "2026-09-24T00:00:00Z",
+            "activated_at": "2026-09-25T00:00:00Z"
+          }
+        ],
+        "laboratory": []
+      }
+    },
+    {
+      "program_id": "second-demo-program",
+      "program_name": "Second Demo Program (fictional)",
+      "roles": {
+        "tenant_signer": [
+          {
+            "key_id": "second-demo-program-k1",
+            "program_id": "second-demo-program",
+            "role": "tenant_signer",
+            "signer_id": "coa-international",
+            "algorithm": "Ed25519",
+            "public_key": "t3QFWg-QSTOcPhfrP6eXAnA6kU2vYALzgrd85DCmcZg",
+            "fingerprint": "7c7e9f6a30b6060dedf57f2e0852fdfd3a79c75179837a23c5fcd33c5d6a1d82",
+            "status": "active",
+            "environment": "demo",
+            "created_at": "2026-09-01T00:00:00Z",
+            "activated_at": "2026-09-01T00:00:00Z"
+          }
+        ],
+        "laboratory": []
+      }
+    }
+  ],
+  "incidents": []
+}

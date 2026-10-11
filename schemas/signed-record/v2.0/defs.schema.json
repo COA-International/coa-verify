@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coa.international/schemas/signed-record/v2.0/defs.schema.json",
+  "title": "Shared definitions for COA signed-record schema v2.0",
+  "$defs": {
+    "identifier": {
+      "description": "Opaque identifier as supplied or assigned: 1-128 printable ASCII characters, no whitespace.",
+      "type": "string",
+      "pattern": "^[!-~]{1,128}$"
+    },
+    "display_text": {
+      "description": "Human-readable text as supplied: 1-300 code points, NFC, none of the forbidden code points of docs/protocol/signed-record-v1.md section 2.1 (this pattern covers the BMP part; verifiers apply the full list), no leading/trailing whitespace from the section 2.1 list.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "pattern": "^[^\\u0000-\\u001F\\u007F-\\u009F\\u00AD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u180E\\u200B-\\u200F\\u2028-\\u202E\\u2060-\\u2064\\u2066-\\u206F\\uD800-\\uDFFF\\uFEFF\\uFFF9-\\uFFFB \\u00A0\\u1680\\u2000-\\u200A\\u202F\\u205F\\u3000]([^\\u0000-\\u001F\\u007F-\\u009F\\u00AD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u180E\\u200B-\\u200F\\u2028-\\u202E\\u2060-\\u2064\\u2066-\\u206F\\uD800-\\uDFFF\\uFEFF\\uFFF9-\\uFFFB]*[^\\u0000-\\u001F\\u007F-\\u009F\\u00AD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u180E\\u200B-\\u200F\\u2028-\\u202E\\u2060-\\u2064\\u2066-\\u206F\\uD800-\\uDFFF\\uFEFF\\uFFF9-\\uFFFB \\u00A0\\u1680\\u2000-\\u200A\\u202F\\u205F\\u3000])?$"
+    },
+    "timestamp": {
+      "description": "RFC 3339 UTC timestamp at whole-second precision with a literal Z suffix.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"
+    },
+    "date": {
+      "description": "Calendar date YYYY-MM-DD with no timezone.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    },
+    "sha256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "byte_length": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "verification_code": {
+      "description": "28 characters of Crockford base32 (0-9, A-Z excluding I, L, O, U) = 140 random bits. Canonical form: uppercase, no separators.",
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{28}$"
+    },
+    "named_entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "$ref": "#/$defs/display_text"
+        }
+      }
+    }
+  }
+}

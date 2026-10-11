@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coa.international/schemas/anchor-proof/v1/anchor-proof.schema.json",
+  "title": "COA anchor proof v1 (anchor-proof.json)",
+  "description": "Out-of-band evidence that one signed record's anchor leaf was included in a batch Merkle root, and how that root was anchored. It never alters the signed payload. Verifiers MUST recompute leaf_hash and the root from inclusion_path; they MUST NOT trust `root` or `anchor.status` alone. Normative rules: docs/protocol/signed-record-v1.md section 6.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "anchor_proof_version",
+    "batch_id",
+    "method",
+    "public",
+    "leaf",
+    "leaf_hash",
+    "tree_size",
+    "leaf_index",
+    "inclusion_path",
+    "root",
+    "batch_closed_at",
+    "anchor"
+  ],
+  "properties": {
+    "anchor_proof_version": {
+      "const": "1"
+    },
+    "batch_id": {
+      "type": "string",
+      "pattern": "^[!-~]{1,128}$"
+    },
+    "method": {
+      "description": "`opentimestamps-bitcoin` is public. `local-test` is a deterministic development/demo provider and is NOT a public anchor.",
+      "enum": [
+        "opentimestamps-bitcoin",
+        "local-test"
+      ]
+    },
+    "public": {
+      "type": "boolean",
+      "description": "Derived from method: false for local-test, true for opentimestamps-bitcoin. Verifiers derive it from `method` and ignore a contradicting value."
+    },
+    "leaf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_sha256",
+        "payload_sha256"
+      ],
+      "properties": {
+        "document_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Equals payload.document.sha256."
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of RFC8785(payload) bytes (without the signing domain prefix)."
+        }
+      }
+    },
+    "leaf_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "tree_size": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1048576
+    },
+    "leaf_index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "inclusion_path": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "root": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "batch_closed_at": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "pending",
+            "confirmed",
+            "failed"
+          ]
+        },
+        "submitted_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+        },
+        "confirmed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "Informational. Timing evidence comes only from a verified OpenTimestamps attestation (Bitcoin block header time), never from this field."
+        },
+        "network": {
+          "enum": [
+            "bitcoin-mainnet",
+            "bitcoin-testnet",
+            "local"
+          ]
+        },
+        "block_height": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "block_time": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+          "description": "Informational copy of the attested block header time; verifiers must recompute it from the verified proof."
+        },
+        "transaction_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "explorer_url": {
+          "type": "string",
+          "pattern": "^https://",
+          "maxLength": 300
+        },
+        "ots_proof_base64": {
+          "description": "OpenTimestamps .ots proof over `root` (raw 32 bytes), standard base64. Verifiers check this proof AND the Merkle path.",
+          "type": "string",
+          "maxLength": 200000
+        },
+        "local_attestation": {
+          "description": "local-test only: fixed text labelled NOT PUBLIC. Carries no timing evidence.",
+          "type": "string",
+          "maxLength": 300
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "const": "local-test"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "public": {
+            "const": false
+          },
+          "anchor": {
+            "properties": {
+              "network": {
+                "const": "local"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "const": "opentimestamps-bitcoin"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "public": {
+            "const": true
+          }
+        }
+      }
+    }
+  ]
+}

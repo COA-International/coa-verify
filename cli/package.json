@@ -1,0 +1,12 @@
+{
+  "name": "coa-verify-workspace",
+  "private": true,
+  "license": "Apache-2.0",
+  "description": "Independent COA signed-record verifier (verify-core library + coa-verify CLI). Built only from docs/protocol and fixtures/vectors; never imports service/ code.",
+  "workspaces": ["verify-core", "coa-verify"],
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces"
+  }
+}

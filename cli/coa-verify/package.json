@@ -1,0 +1,32 @@
+{
+  "name": "coa-verify",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "description": "Independent, offline verifier for COA International signed certificates (signed records, documents and public anchors).",
+  "keywords": ["coa", "certificate", "verification", "ed25519", "opentimestamps", "signature"],
+  "homepage": "https://coa.international/verify-independently",
+  "repository": {"type": "git", "url": "git+https://github.com/COA-International/coa-verify.git", "directory": "cli/coa-verify"},
+  "bugs": {"url": "https://github.com/COA-International/coa-verify/issues"},
+  "author": "COA International",
+  "type": "module",
+  "bin": {"coa-verify": "bundle/coa-verify.mjs"},
+  "files": ["bundle/coa-verify.mjs", "bundle/LICENSE", "bundle/NOTICE", "bundle/THIRD_PARTY_NOTICES.md", "README.md"],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "bundle": "node scripts/bundle.mjs",
+    "sea": "node scripts/build-sea.mjs",
+    "test": "vitest run",
+    "prepack": "npm run bundle"
+  },
+  "devDependencies": {
+    "@coa/verify-core": "0.1.0",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.2"
+  }
+}

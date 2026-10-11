@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://coa.international/schemas/signed-record/v2.0/envelope.schema.json",
+  "title": "COA signed-record envelope (signed-record.json)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["payload", "signature"],
+  "properties": {
+    "payload": {"$ref": "payload.schema.json"},
+    "signature": {
+      "description": "Ed25519 signature, base64url without padding (86 chars), over UTF8(\"COA-INTL-ISSUANCE-v1\\n\") || RFC8785(payload).",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{85}[AQgw]$"
+    }
+  }
+}

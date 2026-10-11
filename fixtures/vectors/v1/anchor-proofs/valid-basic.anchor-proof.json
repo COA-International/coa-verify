@@ -1,0 +1,26 @@
+{
+  "anchor_proof_version": "1",
+  "batch_id": "anb_vector_0001",
+  "method": "local-test",
+  "public": false,
+  "leaf": {
+    "document_sha256": "c6c48add6639a02e8326077624f78a5a854fcc493b44f7cbf069e474f393a9ff",
+    "payload_sha256": "5ff487db91ac315ea9e527067ab9a8fdf3c90b11b4e1a5b0303b1bd38190b0ff"
+  },
+  "leaf_hash": "fb91bb32bd06cdacb302bec0af20e0cda06725d64ff0c2e9438ef0ae440ca47e",
+  "tree_size": 3,
+  "leaf_index": 1,
+  "inclusion_path": [
+    "ec78810dc33b6cfd819b3d0148af6d74a6a4a80bec594f5e7a893757d354290c",
+    "710df50b3d8d3b0c28583878cc604de360640201ffee00ac2fc755d5fccaef73"
+  ],
+  "root": "358decc0669e3f40232c8f9d76dc22501d4200e1f184759104dc67f2d8ef479e",
+  "batch_closed_at": "2026-09-24T12:10:00Z",
+  "anchor": {
+    "status": "confirmed",
+    "submitted_at": "2026-09-24T12:10:00Z",
+    "confirmed_at": "2026-09-24T12:10:00Z",
+    "network": "local",
+    "local_attestation": "LOCAL TEST ANCHOR - NOT PUBLIC - root 358decc0669e3f40232c8f9d76dc22501d4200e1f184759104dc67f2d8ef479e"
+  }
+}

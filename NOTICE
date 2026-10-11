@@ -1,0 +1,9 @@
+coa-verify — independent verifier for COA International signed records
+Copyright 2026 COA International
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It includes the following third-party software, under the MIT License:
+  @noble/curves  (Copyright (c) 2022 Paul Miller, https://paulmillr.com)
+  @noble/hashes  (Copyright (c) 2022 Paul Miller, https://paulmillr.com)
+The full licence texts are in THIRD_PARTY_NOTICES.md where the software is distributed bundled.

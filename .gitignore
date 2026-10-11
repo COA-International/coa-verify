@@ -1,0 +1,7 @@
+node_modules/
+dist/
+bundle/
+sea-out/
+*.tgz
+.DS_Store
+Thumbs.db

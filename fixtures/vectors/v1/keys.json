@@ -1,0 +1,49 @@
+{
+  "warning": "TEST-ONLY KEYS derived from public seeds. Never trust these fingerprints outside tests; production readiness checks reject them.",
+  "keys": [
+    {
+      "key_id": "demo-program-k1",
+      "seed_label": "tenant-signer-demo-program-1",
+      "private_seed_hex": "60ef4edaa666f97c2d51f5ce4ddf5dba0875a71c87e67c7719ec254b78064658",
+      "public_key": "sKhPMljtNJ9Bnlr5Rr4GMcgKnULgy2H_C7-BQQnXAEk",
+      "fingerprint": "3d325d98ea9b0082fdcfc40d251d13007e3befab2cc07750eac8bf109b97a917",
+      "program_id": "demo-program",
+      "role": "tenant_signer",
+      "environment": "demo",
+      "signer_id": "coa-international"
+    },
+    {
+      "key_id": "demo-program-k2",
+      "seed_label": "tenant-signer-demo-program-2",
+      "private_seed_hex": "0bacbe0c8fa6eb3c894b5342b5234655e562cfa66122b22ff8644271088088f6",
+      "public_key": "Dg0SS77gpfO0EniJoHbCraeLmpqihmWg0-qz1vN6qm0",
+      "fingerprint": "0c3c8a76d9226216f53649d64c286552f8a8fc7779c7cd371ce62936de27e705",
+      "program_id": "demo-program",
+      "role": "tenant_signer",
+      "environment": "demo",
+      "signer_id": "coa-international"
+    },
+    {
+      "key_id": "second-demo-program-k1",
+      "seed_label": "tenant-signer-second-demo-program-1",
+      "private_seed_hex": "843bfa28d99cbba1f1228a455aa9a87f8560be43d5163cc4313ea497e1bf0008",
+      "public_key": "t3QFWg-QSTOcPhfrP6eXAnA6kU2vYALzgrd85DCmcZg",
+      "fingerprint": "7c7e9f6a30b6060dedf57f2e0852fdfd3a79c75179837a23c5fcd33c5d6a1d82",
+      "program_id": "second-demo-program",
+      "role": "tenant_signer",
+      "environment": "demo",
+      "signer_id": "coa-international"
+    },
+    {
+      "key_id": "attacker-k1",
+      "seed_label": "attacker",
+      "private_seed_hex": "91307924bbe9f31eef2787eb7e9b205a3215e020af6a6856c9cd73cbba93a269",
+      "public_key": "rJ7yuLcTgDZaJBImACwgMSdXASqEtbdjpaMvlC72erQ",
+      "fingerprint": "edd4d064a02ef9306124e276114d1ebae57c4bc6d9a2ded3aced1b6c5a26554b",
+      "program_id": "demo-program",
+      "role": "tenant_signer",
+      "environment": "demo",
+      "signer_id": "coa-international"
+    }
+  ]
+}

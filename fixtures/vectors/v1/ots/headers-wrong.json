@@ -1,0 +1,9 @@
+{
+  "warning": "SYNTHETIC TEST HEADERS with a WRONG merkle root.",
+  "headers": {
+    "900000": {
+      "merkle_root": "8810ad581e59f2bc3928b261707a71308f7e139eb04820366dc4d5c18d980225",
+      "time": 1790000000
+    }
+  }
+}
