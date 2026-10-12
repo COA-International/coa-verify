@@ -48,8 +48,9 @@ gh attestation verify coa-verify-<version>-linux-x64 --repo COA-International/co
 
 1. **Unzip** the customer package (it holds `signed-record.json`, the PDFs and `public-key.json`).
 2. **Pin COA International's signing key once.** Take the key fingerprint for the program operator from a
-   source you trust (COA International publishes them at <https://coa.international/verify-independently>;
-   ask COA International directly if you want a second channel). Then:
+   source you trust. COA International publishes them in two places, through different systems: the site
+   (<https://coa.international/verify-independently>) and [`KEYS.md`](KEYS.md) in this repository. Use a
+   fingerprint only if both show it. Then:
 
    ```sh
    coa-verify trust add --store trust.json --key-file ./package/public-key.json \

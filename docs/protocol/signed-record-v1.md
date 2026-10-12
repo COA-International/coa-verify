@@ -140,6 +140,19 @@ from `inclusion_path`, and MUST compare it to `root` (vector `anchor-leaf-mismat
 OpenTimestamps proof over the raw 32-byte `root`. `public` is derived from `method`
 (`local-test` → not public, labelled "local test anchor — not public" wherever shown).
 
+**Operator leaves (2026-10-12, independent review F5 and R6).** A batch may also contain COA International's own
+facts in positions that would otherwise be random padding:
+
+```
+operator_leaf_data = UTF8("COA-INTL-OPERATOR-LEAF-v1\n") || UTF8(kind) || 0x0A || raw32(sha256)
+```
+
+`kind` is `key-directory` (SHA-256 of the RFC 8785 canonical key directory without `generated_at`, published
+with its proof at `GET /api/v1/public/anchors/key-directory`) or `audit-head` (the newest audit-chain
+`entry_hash`, checked privately with `python -m coa_service.tools.audit_anchor`). The different domain label
+means an operator leaf can never be read as a record leaf. Record proofs are unchanged: verifiers treat these
+positions like any other sibling hash.
+
 ### 6.1 OpenTimestamps proofs (`method: opentimestamps-bitcoin`)
 
 `ots_proof_base64` is a standard OpenTimestamps detached proof (`.ots`, SHA-256 file hash) whose file
